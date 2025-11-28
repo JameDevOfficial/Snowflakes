@@ -1,5 +1,6 @@
 local UI = {}
 
+
 local fontDefault = love.graphics.newFont(20)
 local font30 = love.graphics.newFont(30)
 local font50 = love.graphics.newFont(50)
