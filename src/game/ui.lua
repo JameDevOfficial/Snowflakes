@@ -15,7 +15,9 @@ font30:setFilter("nearest", "nearest")
 font50:setFilter("nearest", "nearest")
 
 UI.draw = function()
-
+    for i, snowflake in pairs(Core.snowflakes) do
+        snowflake:render()
+    end
     if Settings.DEBUG then
         UI.drawDebug()
     end

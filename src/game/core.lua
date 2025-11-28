@@ -10,14 +10,16 @@ INGAME = 12
 
 
 Core.reset = function()
-    
+
 end
 
 Core.load = function()
-    math.randomseed(os.time())
     Core.status = LOADING
-
+    math.randomseed(os.time())
     Core.screen = UI.windowResized()
+
+    Core.snowflakes = {}
+    table.insert(Core.snowflakes, Snowflake:new())
     Core.status = INMENU
 end
 

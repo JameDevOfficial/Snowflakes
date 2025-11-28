@@ -5,20 +5,23 @@ function M:new(opts)
     opts       = opts or {}
     local o    = setmetatable({}, self)
     o.type     = "snowflake"
-    o.size     = opts.size or Settings.player.size
+    o.size     = opts.size or Settings.snowflake.size
     o.scale    = opts.scale or 1
     o.color    = opts.color or { 1, 1, 1, 1 }
     o.position = opts.position or { x = Core.screen.centerX, y = Core.screen.centerY }
     o.rotation = opts.rotation or 0
-    o.points   = M:createRandomShape()
-    o.mesh     = love.graphics.newMesh(o.points * 2 + 2, "fan", "static")
-    o.mesh:setVertices(o.shape)
+    o.points   = M:createRandomShape(10, 50, 100, 0, 0)
+    o.mesh     = love.graphics.newMesh(#o.points * 2 + 2, "fan", "static")
+    o.mesh:setVertices(o.points)
 
     return o
 end
 
+function M:update()
+
+end
+
 function M:render()
-    if not self.body then return end
     love.graphics.push();
     love.graphics.setLineWidth(2)
     love.graphics.translate(self.position.x, self.position.y)
@@ -32,6 +35,7 @@ end
 
 function M:createRandomShape(points, minRadius, maxRadius, cx, cy)
     local vertices = {}
+    print(points)
     local angleStep = 2 * math.pi / (points * 2)
     table.insert(vertices, { cx, cy })
     local firstCord = nil

@@ -2,6 +2,9 @@ local M = {}
 
 M.DEBUG = false
 
+M.snowflake = {}
+M.snowflake.size = { 100, 100 }
+
 M.fonts = {}
 M.fonts.quirkyRobot = "assets/fonts/QuirkyRobot.ttf"
 M.fonts.semiCoder = "assets/fonts/SemiCoder.otf"
