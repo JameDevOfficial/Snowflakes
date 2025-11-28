@@ -102,8 +102,8 @@ end
 
 UI.windowResized = function()
     local screen = {
-        X = 0,
-        Y = 0,
+        w = 0,
+        h = 0,
         centerX = 0,
         centerY = 0,
         minSize = 0,
@@ -112,10 +112,10 @@ UI.windowResized = function()
         bottomLeft = { X = 0, Y = 0 },
         bottomRight = { X = 0, Y = 0 }
     }
-    screen.X, screen.Y = love.graphics.getDimensions()
-    screen.minSize = (screen.Y < screen.X) and screen.Y or screen.X
-    screen.centerX = screen.X / 2
-    screen.centerY = screen.Y / 2
+    screen.w, screen.h = love.graphics.getDimensions()
+    screen.minSize = (screen.h < screen.w) and screen.h or screen.w
+    screen.centerX = screen.w / 2
+    screen.centerY = screen.h / 2
 
     local half = screen.minSize / 2
     screen.topLeft.X = screen.centerX - half
