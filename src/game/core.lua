@@ -17,9 +17,9 @@ Core.load = function()
     Core.status = LOADING
     math.randomseed(os.time())
     Core.screen = UI.windowResized()
-
     Core.snowflakes = {}
-    table.insert(Core.snowflakes, Snowflake:new())
+
+    Snowflake.generateSnowflakes(16, 10)
     Core.status = INMENU
 end
 

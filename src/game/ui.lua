@@ -1,6 +1,5 @@
 local UI = {}
 
-
 local fontDefault = love.graphics.newFont(20)
 local font30 = love.graphics.newFont(30)
 local font50 = love.graphics.newFont(50)
@@ -18,6 +17,7 @@ UI.draw = function()
     for i, snowflake in pairs(Core.snowflakes) do
         snowflake:render()
     end
+
     if Settings.DEBUG then
         UI.drawDebug()
     end
