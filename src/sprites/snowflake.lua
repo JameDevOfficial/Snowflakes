@@ -1,35 +1,6 @@
 local M = {}
 M.__index = M
 
-
-function M.generateSnowflakes(amount, padding)
-    local sideAmount = math.floor(math.sqrt(amount) + 0.99)
-    local screen = Core.screen
-    local xOffset = (screen.w - screen.minSize) / 2
-    local yOffset = (screen.h - screen.minSize) / 2
-    local sfWidth = (screen.minSize - (padding * sideAmount + 1)) / sideAmount
-    local minOffset = sfWidth / 30
-
-    local processed = 0
-    for i = 1, sideAmount, 1 do
-        local sideAmount2 = sideAmount
-        if processed + sideAmount > amount then sideAmount2 = amount % sideAmount end
-        for j = 1, sideAmount2, 1 do
-            local opts = {
-                radius = sfWidth / 2,
-                position = {
-                    x = xOffset + (sfWidth * j - 1) + padding * j - sfWidth / 2,
-                    y = yOffset + (sfWidth * i - 1) + padding * i - sfWidth / 2
-                },
-                maxOffset = math.random(minOffset, minOffset * 2.5),
-            }
-            table.insert(Core.snowflakes, M:new(opts))
-            processed = processed + 1
-        end
-        if sideAmount2 ~= sideAmount then return end
-    end
-end
-
 function M:new(opts)
     opts        = opts or {}
     local o     = setmetatable({}, self)

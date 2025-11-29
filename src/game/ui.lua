@@ -17,7 +17,7 @@ UI.draw = function()
     for i, snowflake in pairs(Core.snowflakes) do
         snowflake:render()
     end
-
+    Core.drawSnoflakeButtons()
     if Settings.DEBUG then
         UI.drawDebug()
     end

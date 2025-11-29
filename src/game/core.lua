@@ -8,7 +8,6 @@ INHELP = 5
 INMENU = 11
 INGAME = 12
 
-
 Core.reset = function()
 
 end
@@ -18,8 +17,10 @@ Core.load = function()
     math.randomseed(os.time())
     Core.screen = UI.windowResized()
     Core.snowflakes = {}
+    Core.snowflakeButtons = {}
 
-    Snowflake.generateSnowflakes(16, 10)
+    --Snowflake.generateSnowflakes(16, 10)
+    Core.generateMemoryField(16, 50)
     Core.status = INMENU
 end
 
@@ -49,9 +50,55 @@ Core.keypressed = function(key, scancode, isrepeat)
         end
     end
 end
+
 Core.mousepressed = function(x, y, button, istouch, presses)
     if Core.status == INGAME then
+        if button == 1 then --lmb
 
+        end
+    end
+end
+
+Core.generateMemoryField = function(amount, padding)
+    local sideAmount = math.floor(math.sqrt(amount) + 0.99)
+    local screen = Core.screen
+    local xOffset = (screen.w - screen.minSize) / 2
+    local yOffset = (screen.h - screen.minSize) / 2
+    local sfWidth = (screen.minSize - (padding * sideAmount + padding)) / sideAmount
+    local minOffset = sfWidth / 30
+    local br = sfWidth / 20
+    local bpadding = 10
+
+    local processed = 0
+    for i = 1, sideAmount, 1 do
+        local sideAmount2 = sideAmount
+        if processed + sideAmount > amount then sideAmount2 = amount % sideAmount end
+        for j = 1, sideAmount2, 1 do
+            local opts = {
+                radius = sfWidth / 2,
+                position = {
+                    x = xOffset + (sfWidth * j - 1) + padding * j - sfWidth / 2,
+                    y = yOffset + (sfWidth * i - 1) + padding * i - sfWidth / 2
+                },
+                maxOffset = math.random(minOffset, minOffset * 2.5),
+            }
+            table.insert(Core.snowflakes, Snowflake:new(opts))
+
+            local x = opts.position.x - sfWidth / 2
+            local y = opts.position.y - sfWidth / 2
+
+
+            table.insert(Core.snowflakeButtons, { x - bpadding, y - bpadding, sfWidth + bpadding * 2, br })
+            processed = processed + 1
+        end
+        if sideAmount2 ~= sideAmount then return end
+    end
+end
+
+function Core.drawSnoflakeButtons()
+    for i, snowflake in ipairs(Core.snowflakeButtons) do
+        love.graphics.rectangle("line", snowflake[1], snowflake[2], snowflake[3], snowflake[3], snowflake[4],
+            snowflake[4])
     end
 end
 
