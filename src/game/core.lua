@@ -22,7 +22,7 @@ Core.load = function()
 
     --Snowflake.generateSnowflakes(16, 10)
     Core.generateMemoryField(16, 50)
-    Core.status = INMENU
+    Core.status = INGAME
 end
 
 Core.update = function(dt)
@@ -59,6 +59,7 @@ Core.mousepressed = function(x, y, button, istouch, presses)
                 if x > button[1] and x < button[1] + button[3] then
                     if y > button[2] and y < button[2] + button[3] then
                         print("Button Pressed")
+                        button.visible = false
                         break
                     end
                 end
@@ -112,17 +113,20 @@ Core.generateMemoryField = function(amount, padding)
             local y = opts.position.y - sfWidth / 2
 
 
-            table.insert(Core.snowflakeButtons, { x - bpadding, y - bpadding, sfWidth + bpadding * 2, br })
+            table.insert(Core.snowflakeButtons,
+                { x - bpadding, y - bpadding, sfWidth + bpadding * 2, br, visible = true })
             processed = processed + 1
         end
         if sideAmount2 ~= sideAmount then return end
     end
 end
 
-function Core.drawSnoflakeButtons()
+function Core.drawSnowflakeButtons()
     for i, snowflake in ipairs(Core.snowflakeButtons) do
-        love.graphics.rectangle("line", snowflake[1], snowflake[2], snowflake[3], snowflake[3], snowflake[4],
-            snowflake[4])
+        if snowflake.visible then
+            love.graphics.rectangle("fill", snowflake[1], snowflake[2], snowflake[3], snowflake[3], snowflake[4],
+                snowflake[4])
+        end
     end
 end
 
