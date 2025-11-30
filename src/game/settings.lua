@@ -1,6 +1,6 @@
 local M = {}
 
-M.DEBUG = true
+M.DEBUG = false
 
 M.snowflake = {}
 M.snowflake.size = { 100, 100 }
