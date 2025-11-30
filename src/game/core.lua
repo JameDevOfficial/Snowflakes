@@ -24,6 +24,8 @@ Core.load = function()
     --Snowflake.generateSnowflakes(16, 10)
     Core.generateMemoryField(16, 50)
     Core.status = INGAME
+    Core.map = Core.generateRandomMap(16)
+    Core.printMap()
 end
 
 Core.update = function(dt)
@@ -32,7 +34,7 @@ Core.update = function(dt)
             btn.alpha = btn.alpha - 0.01
         end
     end
-    print(love.timer.getTime() .. " - " .. Core.lastRevealedButtonTime + Settings.buttons.delay)
+    -- print(love.timer.getTime() .. " - " .. Core.lastRevealedButtonTime + Settings.buttons.delay)
     if Core.revealedButtons > 1 and love.timer.getTime() > Core.lastRevealedButtonTime + Settings.buttons.delay then
         for i, btn in ipairs(Core.snowflakeButtons) do
             btn.alpha = 1
@@ -73,8 +75,8 @@ Core.mousepressed = function(x, y, button, istouch, presses)
 
     for i, btn in ipairs(Core.snowflakeButtons) do
         if btn.alpha == 1 and
-           x > btn[1] and x < btn[1] + btn[3] and
-           y > btn[2] and y < btn[2] + btn[3] then
+            x > btn[1] and x < btn[1] + btn[3] and
+            y > btn[2] and y < btn[2] + btn[3] then
             print("Button Pressed")
             btn.visible = false
             Core.lastRevealedButtonTime = love.timer.getTime()
@@ -100,8 +102,37 @@ Core.mousemoved = function(x, y, dx, dy, istouch)
     end
 end
 
+function Core.generateRandomMap(amount)
+    local pairs = {}
+    local sideAmount = math.floor(math.sqrt(amount) + 0.999)
+    for i = 1, amount / 2 do
+        table.insert(pairs, i)
+        table.insert(pairs, i)
+    end
+    for i = #pairs, 2, -1 do
+        local j = math.random(1, i)
+        pairs[i], pairs[j] = pairs[j], pairs[i]
+    end
+
+    local map = {}
+    local index = 1
+    for i = 1, sideAmount do
+        local row = {}
+        for j = 1, sideAmount do
+            if index <= #pairs then
+                table.insert(row, pairs[index])
+                index = index + 1
+            end
+        end
+        if #row > 0 then
+            table.insert(map, row)
+        end
+    end
+    return map
+end
+
 Core.generateMemoryField = function(amount, padding)
-    local sideAmount = math.floor(math.sqrt(amount) + 0.99)
+    local sideAmount = math.floor(math.sqrt(amount) + 0.999)
     local screen = Core.screen
     local xOffset = (screen.w - screen.minSize) / 2
     local yOffset = (screen.h - screen.minSize) / 2
@@ -142,6 +173,16 @@ function Core.drawSnowflakeButtons()
         love.graphics.setColor(1, 1, 1, snowflake.alpha)
         love.graphics.rectangle("fill", snowflake[1], snowflake[2], snowflake[3], snowflake[3], snowflake[4],
             snowflake[4])
+    end
+end
+
+function Core.printMap()
+    for i, row in ipairs(Core.map) do
+        local line = ""
+        for j, val in ipairs(row) do
+            line = line .. string.format("%2d ", val)
+        end
+        print(line)
     end
 end
 
