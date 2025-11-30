@@ -3,47 +3,62 @@ M.__index = M
 M.lastSpawned = 0
 
 function M:new(opts)
-    opts        = opts or {}
-    local o     = setmetatable({}, self)
-    o.type      = "snowflake"
-    o.radius    = opts.radius or Core.screen.minSize
+    opts = opts or {}
+    local o = setmetatable({}, self)
+    o.type = "snowflake"
+    o.radius = opts.radius or Core.screen.minSize
     o.maxOffset = opts.maxOffset or 25
-    o.color     = opts.color or { 1, 1, 1, 1 }
-    o.position  = opts.position or { x = Core.screen.centerX, y = Core.screen.centerY }
-    o.speed     = opts.speed or Settings.snowflake.speed
-    o.points    = opts.points or M:createRandomShape(o.radius, o.maxOffset, o.position.x, o.position.y)
-    if opts.points then
-        M:movePoints(opts, o)
-    end
+    o.color = opts.color or { 1, 1, 1, 1 }
+    o.position = opts.position or { x = Core.screen.centerX, y = Core.screen.centerY }
+    o.speed = opts.speed or Settings.snowflake.speed
+    -- Generate points around (0, 0)
+    o.points = opts.points or M:createRandomShape(o.radius, o.maxOffset, 0, 0)
+    o.angle = opts.angle or 0
+
+    local canvasSize = (o.radius + o.maxOffset) * 2
+    o.canvas = love.graphics.newCanvas(canvasSize, canvasSize)
+    love.graphics.setCanvas(o.canvas)
+    love.graphics.clear()
+    love.graphics.push()
+    love.graphics.translate(canvasSize / 2, canvasSize / 2)
+    love.graphics.setColor(o.color)
+    love.graphics.setLineWidth(2)
+    love.graphics.line(o.points)
+    love.graphics.pop()
+    love.graphics.setCanvas()
+
     return o
+end
+
+function M:shiftPointsToOrigin(points, position, radius)
+    local shifted = {}
+    for i = 1, #points, 2 do
+        table.insert(shifted, points[i] - position.x + radius)
+        table.insert(shifted, points[i + 1] - position.y + radius)
+    end
+    return shifted
 end
 
 function M:update(dt)
     if Core.status == INMENU then
-        self.position.y = self.position.y + self.speed * dt
-        local opts = {
-            position = { x = self.position.x, y = self.position.y },
-            points = self.points
-        }
-        self:movePoints(opts, self)
+        self.position.y = self.position.y + self.speed * dt * 0.5
+        self.angle = (self.angle + dt * self.speed / 300) % (2 * math.pi)
     end
 end
 
 function M:render()
-    if Core.status == INGAME then
-        love.graphics.setLineStyle("smooth")
+    if Core.status == INGAME or Core.status == INMENU then
         love.graphics.push()
-        love.graphics.setColor(self.color)
-        love.graphics.setLineWidth(2)
-        love.graphics.line(self.points)
-        love.graphics.pop()
-    elseif Core.status == INMENU then
-        love.graphics.setLineStyle("rough")
-        love.graphics.push()
-        love.graphics.setColor(self.color)
-        love.graphics.setLineWidth(2)
-
-        love.graphics.line(self.points)
+        love.graphics.translate(self.position.x, self.position.y)
+        love.graphics.rotate(self.angle)
+        love.graphics.setColor(1, 1, 1, 1)
+        local canvasSize = (self.radius + self.maxOffset) * 2
+        love.graphics.draw(self.canvas, -canvasSize / 2, -canvasSize / 2)
+        if Settings.DEBUG then
+            love.graphics.setColor(1, 0, 0, 1)
+            love.graphics.setLineWidth(2)
+            love.graphics.rectangle("line", -canvasSize / 2, -canvasSize / 2, canvasSize, canvasSize)
+        end
 
         love.graphics.pop()
     end
@@ -58,7 +73,7 @@ function M:createRandomShape(radius, maxOffset, cx, cy)
         branches = 5 + math.random(1, 6)
         pointsPerBranch = 16 + 2 * math.random(1, 6)
     end
-    
+
     local pointsPerBranchSide = pointsPerBranch / 2
     local lastPoint = nil
     print("Branches: " .. branches .. "\nPoints Per Branch: " .. pointsPerBranch)

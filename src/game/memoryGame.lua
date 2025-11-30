@@ -82,6 +82,7 @@ M.generateMemoryField = function(amount, padding)
 
             local x = opts.position.x - sfWidth / 2
             local y = opts.position.y - sfWidth / 2
+            local saturation = math.random(50, 90) / 100
 
             table.insert(Core.snowflakeButtons,
                 {
@@ -92,7 +93,7 @@ M.generateMemoryField = function(amount, padding)
                     visible = true,
                     alpha = 1,
                     mapID = id,
-                    color = { 1, 1, 1 },
+                    color = { saturation, saturation + math.random(1, 10) / 10, 1 },
                     mode =
                     "fill"
                 })
