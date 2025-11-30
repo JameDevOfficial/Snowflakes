@@ -66,7 +66,7 @@ M.generateMemoryField = function(amount, padding)
                         x = xOffset + (sfWidth * j - 1) + padding * j - sfWidth / 2,
                         y = yOffset + (sfWidth * i - 1) + padding * i - sfWidth / 2
                     },
-                    maxOffset = math.random(minOffset, minOffset * 2.5),
+                    maxOffset = math.random(minOffset, minOffset * 3.5),
                 }
                 points = Snowflake:new(opts).points
                 processedSnowflakesPointsWithId[id] = points
@@ -80,7 +80,7 @@ M.generateMemoryField = function(amount, padding)
                     x = xOffset + (sfWidth * j - 1) + padding * j - sfWidth / 2,
                     y = yOffset + (sfWidth * i - 1) + padding * i - sfWidth / 2
                 },
-                maxOffset = math.random(minOffset, minOffset * 2.5),
+                maxOffset = math.random(minOffset, minOffset * 3.5),
                 points = points,
                 color = color
             }

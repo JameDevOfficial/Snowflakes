@@ -7,7 +7,8 @@ function M:new(opts)
     local o = setmetatable({}, self)
     o.type = "snowflake"
     o.radius = opts.radius or Core.screen.minSize
-    o.maxOffset = opts.maxOffset or 25
+    o.maxOffset = opts.maxOffset or 35
+    print(o.maxOffset)
     o.color = opts.color or { 1, 1, 1, 1 }
     o.position = opts.position or { x = Core.screen.centerX, y = Core.screen.centerY }
     o.speed = opts.speed or math.random(50, 150)
@@ -73,7 +74,7 @@ function M:createRandomShape(radius, maxOffset, cx, cy)
         pointsPerBranch = 8 + 2 * math.random(1, 4)
     else
         branches = 5 + math.random(1, 6)
-        pointsPerBranch = 16 + 2 * math.random(1, 6)
+        pointsPerBranch = 32 + 2 * math.random(1, 6)
     end
 
     local pointsPerBranchSide = pointsPerBranch / 2
@@ -82,11 +83,17 @@ function M:createRandomShape(radius, maxOffset, cx, cy)
 
     --Half branch
     local halfBranch = {}
+    local lastOffset = 0
     for i = 1, pointsPerBranchSide do
         local t = i / pointsPerBranchSide
         local r = radius * t
         local lateralOffset = math.random(0, maxOffset) * 1.7 * r / radius
-
+        if lastOffset >= 3 * maxOffset / 5 then
+            t = (i - 0.5) / pointsPerBranch
+            r = radius * t
+            lateralOffset = 0
+        end
+        lastOffset = lateralOffset
         local x, y
         if i == pointsPerBranchSide then
             x = math.cos(0) * r + math.sin(0) * lateralOffset
@@ -115,7 +122,6 @@ function M:createRandomShape(radius, maxOffset, cx, cy)
         table.insert(fullBranch, -y)
     end
 
-    -- Branches
     local vertices = {}
     table.insert(vertices, cx)
     table.insert(vertices, cy)
