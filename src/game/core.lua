@@ -8,7 +8,12 @@ INMENU = 11
 INGAME = 12
 
 Core.reset = function()
-
+    Core.snowflakes = {}
+    Core.snowflakeButtons = {}
+    Core.revealedButtons = 0
+    Core.lastRevealedButtonTime = 0
+    Core.map = MemoryGame.generateRandomMap(16)
+    MemoryGame.generateMemoryField(16, 50)
 end
 
 Core.load = function()
@@ -22,14 +27,25 @@ Core.load = function()
     Core.lastRevealedButtonTime = 0
 
     --Snowflake.generateSnowflakes(16, 10)
-    Core.status = INGAME
-    Core.map = MemoryGame.generateRandomMap(16)
-    MemoryGame.generateMemoryField(16, 50)
-    MemoryGame.printMap()
+
+    Core.status = INMENU
+    -- MemoryGame.printMap()
 end
 
 Core.update = function(dt)
-    MemoryGame.handleButtons()
+    if Core.status == INMENU then
+        Snowflake.spawnRandomSnowflakesBackground(dt)
+        for i = #Core.snowflakes, 1, -1 do
+            local snowflake = Core.snowflakes[i]
+            if snowflake.position.y - snowflake.radius > Core.screen.h then
+                table.remove(Core.snowflakes, i)
+            else
+                snowflake:update(dt)
+            end
+        end
+    elseif Core.status == INGAME then
+        MemoryGame.handleButtons()
+    end
 end
 
 Core.keypressed = function(key, scancode, isrepeat)
@@ -52,6 +68,7 @@ Core.keypressed = function(key, scancode, isrepeat)
 
     if Core.status == INGAME then
         if key == "space" then
+
         end
     end
 end
@@ -79,7 +96,7 @@ Core.mousemoved = function(x, y, dx, dy, istouch)
         for i, button in ipairs(Core.snowflakeButtons) do
             if x > button[1] and x < button[1] + button[3] then
                 if y > button[2] and y < button[2] + button[3] then
-                   -- print("Mouse Hovering Button!")
+                    -- print("Mouse Hovering Button!")
                     love.mouse.setCursor(Core.hand)
                     break
                 end

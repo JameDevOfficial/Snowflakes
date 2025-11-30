@@ -14,17 +14,21 @@ font30:setFilter("nearest", "nearest")
 font50:setFilter("nearest", "nearest")
 
 UI.draw = function()
-    for i, snowflake in pairs(Core.snowflakes) do
-        snowflake:render()
+    if Core.status == INGAME then
+        UI.drawGame()
+    elseif Core.status == INMENU then
+        UI.drawMenu()
     end
-    MemoryGame.drawSnowflakeButtons()
     if Settings.DEBUG then
         UI.drawDebug()
     end
 end
 
 UI.drawGame = function()
-
+    for i, snowflake in pairs(Core.snowflakes) do
+        snowflake:render()
+    end
+    MemoryGame.drawSnowflakeButtons()
 end
 
 UI.drawHelp = function()
@@ -32,7 +36,28 @@ UI.drawHelp = function()
 end
 
 UI.drawMenu = function()
+    for i, snowflake in pairs(Core.snowflakes) do
+        snowflake:render()
+    end
+    love.graphics.setColor(0.8, 0.8, 1)
+    love.graphics.setFont(titleFont)
+    local text = "Snowflakes"
+    local width = titleFont:getWidth(text)
+    love.graphics.print(text, (Core.screen.w - width) / 2, Core.screen.centerY - 200)
 
+    love.graphics.setFont(textFont)
+    love.graphics.setColor(1, 1, 1)
+    local text = string.format("Time: %02d:%02d", 0, 0)
+    width = textFont:getWidth(text)
+    local height = textFont:getHeight()
+    love.graphics.print(text, (Core.screen.w - width) / 2, Core.screen.centerY - 100)
+
+    text = "Press 'enter' to start - 'h' for help"
+    love.graphics.setFont(textFont)
+    love.graphics.setColor(1, 1, 1)
+    width = textFont:getWidth(text)
+    local height = textFont:getHeight()
+    love.graphics.print(text, (Core.screen.w - width) / 2, (Core.screen.centerY - height) * 2)
 end
 
 UI.drawDebug = function()
@@ -82,11 +107,13 @@ UI.drawDebug = function()
             "Game state: %s\n" ..
             "Delta Time: %.4fs (%.1f ms)\n" ..
             "Avg Delta: %.4fs (%.1f ms)\n" ..
-            "Time: %.2fs\n",
+            "Time: %.2fs\n" ..
+            "Snowflakes: %03d\n",
             tostring(Core.status),
             dt, dt * 1000,
             avgDt, avgDt * 1000,
-            love.timer.getTime()
+            love.timer.getTime(),
+            #Core.snowflakes
         )
         love.graphics.print(playerText, 10, y)
         y = y + fontDefault:getHeight() * 5

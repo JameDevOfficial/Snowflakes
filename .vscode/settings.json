@@ -2,6 +2,7 @@
     "conventionalCommits.scopes": [
         "snowflake",
         "Core",
-        "UI"
+        "UI",
+        "Menu"
     ]
 }

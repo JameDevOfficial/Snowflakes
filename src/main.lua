@@ -31,7 +31,3 @@ end
 function love.mousemoved(x, y, dx, dy, istouch)
     Core.mousemoved(x, y, dx, dy, istouch)
 end
-
-function love.keyreleased(key, scancode)
-
-end

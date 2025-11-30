@@ -4,6 +4,9 @@ M.DEBUG = true
 
 M.snowflake = {}
 M.snowflake.size = { 100, 100 }
+M.snowflake.spawnDelay = 0.5 -- s
+M.snowflake.spawnChance = 50 -- %
+M.snowflake.speed = 10 
 
 M.buttons = {}
 M.buttons.delay = 2

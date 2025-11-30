@@ -1,5 +1,6 @@
 local M = {}
 M.__index = M
+M.lastSpawned = 0
 
 function M:new(opts)
     opts        = opts or {}
@@ -9,6 +10,7 @@ function M:new(opts)
     o.maxOffset = opts.maxOffset or 25
     o.color     = opts.color or { 1, 1, 1, 1 }
     o.position  = opts.position or { x = Core.screen.centerX, y = Core.screen.centerY }
+    o.speed     = opts.speed or Settings.snowflake.speed
     o.points    = opts.points or M:createRandomShape(o.radius, o.maxOffset, o.position.x, o.position.y)
     if opts.points then
         M:movePoints(opts, o)
@@ -16,21 +18,47 @@ function M:new(opts)
     return o
 end
 
-function M:update()
-
+function M:update(dt)
+    if Core.status == INMENU then
+        self.position.y = self.position.y + self.speed * dt
+        local opts = {
+            position = { x = self.position.x, y = self.position.y },
+            points = self.points
+        }
+        self:movePoints(opts, self)
+    end
 end
 
 function M:render()
-    love.graphics.push()
-    love.graphics.setColor(self.color)
-    love.graphics.setLineWidth(2)
-    love.graphics.line(self.points)
-    love.graphics.pop()
+    if Core.status == INGAME then
+        love.graphics.setLineStyle("smooth")
+        love.graphics.push()
+        love.graphics.setColor(self.color)
+        love.graphics.setLineWidth(2)
+        love.graphics.line(self.points)
+        love.graphics.pop()
+    elseif Core.status == INMENU then
+        love.graphics.setLineStyle("rough")
+        love.graphics.push()
+        love.graphics.setColor(self.color)
+        love.graphics.setLineWidth(2)
+
+        love.graphics.line(self.points)
+
+        love.graphics.pop()
+    end
 end
 
 function M:createRandomShape(radius, maxOffset, cx, cy)
-    local branches = 5 + math.random(1, 6)
-    local pointsPerBranch = 16 + 2 * math.random(1, 4)
+    local branches, pointsPerBranch, pointsPerBranchSide
+    if Core.status == INMENU then
+        branches = 5 + math.random(1, 4)
+        pointsPerBranch = 8 + 2 * math.random(1, 4)
+    else
+        branches = 5 + math.random(1, 6)
+        pointsPerBranch = 16 + 2 * math.random(1, 6)
+    end
+    
     local pointsPerBranchSide = pointsPerBranch / 2
     local lastPoint = nil
     print("Branches: " .. branches .. "\nPoints Per Branch: " .. pointsPerBranch)
@@ -40,7 +68,7 @@ function M:createRandomShape(radius, maxOffset, cx, cy)
     for i = 1, pointsPerBranchSide do
         local t = i / pointsPerBranchSide
         local r = radius * t
-        local lateralOffset = math.random(0, maxOffset) * 1.4 * r / radius
+        local lateralOffset = math.random(0, maxOffset) * 1.7 * r / radius
 
         local x, y
         if i == pointsPerBranchSide then
@@ -108,6 +136,25 @@ function M:movePoints(opts, o)
         local dy = y - centerY + o.position.y
         table.insert(o.points, dx)
         table.insert(o.points, dy)
+    end
+end
+
+function M.spawnRandomSnowflakesBackground(dt)
+    M.lastSpawned = M.lastSpawned + dt
+    if M.lastSpawned > 2 then
+        local rad = math.random(25, 100)
+        local opts = {
+            radius = rad,
+            position = {
+                x = math.random(rad, Core.screen.w - rad),
+                y = -rad
+            },
+            maxOffset = rad / 7,
+            speed = math.random(50, 150)
+        }
+        local newSnowflake = Snowflake:new(opts)
+        table.insert(Core.snowflakes, newSnowflake)
+        M.lastSpawned = 0
     end
 end
 
