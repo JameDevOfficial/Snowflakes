@@ -21,7 +21,7 @@ function M:update()
 end
 
 function M:render()
-    love.graphics.push();
+    love.graphics.push()
     love.graphics.setColor(self.color)
     love.graphics.setLineWidth(2)
     love.graphics.line(self.points)
@@ -40,11 +40,18 @@ function M:createRandomShape(radius, maxOffset, cx, cy)
     for i = 1, pointsPerBranchSide do
         local t = i / pointsPerBranchSide
         local r = radius * t
-        local lateralOffset = math.random(0, maxOffset)
-        local x = math.cos(0) * r + math.sin(0) * lateralOffset
-        local y = math.sin(0) * r - math.cos(0) * lateralOffset
+        local lateralOffset = math.random(0, maxOffset) * 1.4 * r / radius
+
+        local x, y
         if i == pointsPerBranchSide then
+            x = math.cos(0) * r + math.sin(0) * lateralOffset
             y = math.sin(0) * r - math.cos(0)
+        elseif i == 1 then
+            x = math.sin(0) * r - math.cos(0)
+            y = math.sin(0) * r - math.cos(0) * lateralOffset
+        else
+            x = math.cos(0) * r + math.sin(0) * lateralOffset
+            y = math.sin(0) * r - math.cos(0) * lateralOffset
         end
         table.insert(halfBranch, x)
         table.insert(halfBranch, y)

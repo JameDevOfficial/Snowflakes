@@ -18,6 +18,7 @@ Core.load = function()
     Core.screen = UI.windowResized()
     Core.snowflakes = {}
     Core.snowflakeButtons = {}
+    Core.hand = love.mouse.getSystemCursor("hand")
 
     --Snowflake.generateSnowflakes(16, 10)
     Core.generateMemoryField(16, 50)
@@ -54,7 +55,30 @@ end
 Core.mousepressed = function(x, y, button, istouch, presses)
     if Core.status == INGAME then
         if button == 1 then --lmb
+            for i, button in ipairs(Core.snowflakeButtons) do
+                if x > button[1] and x < button[1] + button[3] then
+                    if y > button[2] and y < button[2] + button[3] then
+                        print("Button Pressed")
+                        break
+                    end
+                end
+            end
+        end
+    end
+end
 
+Core.mousemoved = function(x, y, dx, dy, istouch)
+    if Core.status == INGAME then
+        for i, button in ipairs(Core.snowflakeButtons) do
+            if x > button[1] and x < button[1] + button[3] then
+                if y > button[2] and y < button[2] + button[3] then
+                    print("Mouse Hovering Button!")
+                    love.mouse.setCursor(Core.hand)
+                    break
+                end
+            else
+                love.mouse.setCursor()
+            end
         end
     end
 end
