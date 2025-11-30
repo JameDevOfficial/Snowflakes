@@ -48,13 +48,17 @@ M.generateMemoryField = function(amount, padding)
     local bpadding = 10
 
     local processedSnowflakesPointsWithId = {}
+    local snowflakeColorsById = {}
     for i = 1, amount / 2 do
         processedSnowflakesPointsWithId[i] = nil
+        snowflakeColorsById[i] = nil
     end
 
     for i, row in ipairs(Core.map) do
         for j, id in ipairs(row) do
             local points = processedSnowflakesPointsWithId[id]
+            local hue = math.random(40, 80) / 100
+            local color = snowflakeColorsById[id]
             if not points then
                 local opts = {
                     radius = sfWidth / 2,
@@ -66,6 +70,8 @@ M.generateMemoryField = function(amount, padding)
                 }
                 points = Snowflake:new(opts).points
                 processedSnowflakesPointsWithId[id] = points
+                color = { hue, hue + math.random(10, 20) / 100, 1, 1 }
+                snowflakeColorsById[id] = color
             end
 
             local opts = {
@@ -75,7 +81,8 @@ M.generateMemoryField = function(amount, padding)
                     y = yOffset + (sfWidth * i - 1) + padding * i - sfWidth / 2
                 },
                 maxOffset = math.random(minOffset, minOffset * 2.5),
-                points = points
+                points = points,
+                color = color
             }
             local newSnowflake = Snowflake:new(opts)
             table.insert(Core.snowflakes, newSnowflake)
