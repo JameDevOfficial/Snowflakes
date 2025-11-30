@@ -22,6 +22,9 @@ function M:new(opts)
     love.graphics.translate(canvasSize / 2, canvasSize / 2)
     love.graphics.setColor(o.color)
     love.graphics.setLineWidth(2)
+    if Core.isMobile then
+        love.graphics.setLineWidth(1)
+    end
     love.graphics.line(o.points)
     love.graphics.pop()
     love.graphics.setCanvas()
