@@ -2,6 +2,7 @@ Core = require("game.core")
 Settings = require("game.settings")
 UI = require("game.ui")
 Snowflake = require("sprites.snowflake")
+MemoryGame = require("game.memoryGame")
 
 function love.load()
     Core.load()
