@@ -131,7 +131,7 @@ end
 function M.handleButtons()
     for i, btn in ipairs(Core.snowflakeButtons) do
         if btn.visible == false and btn.alpha > 0 then
-            btn.alpha = btn.alpha - 0.01
+            btn.alpha = btn.alpha - 1 * love.timer.getDelta()
         end
     end
     -- print(love.timer.getTime() .. " - " .. Core.lastRevealedButtonTime + Settings.buttons.delay)
@@ -145,23 +145,25 @@ function M.handleButtons()
             end
         end
         Core.revealedButtons = 0
-        if ids[1] == ids[2] then
-            for _, btn in ipairs(btns) do
-                print("Changed btn " .. ids[1])
-                btn.color = { 0.2, 1, 0.2 }
-                btn.mode = "line"
+        if #btns >= 2 then
+            if ids[1] == ids[2] then
+                for _, btn in ipairs(btns) do
+                    print("Changed btn " .. ids[1])
+                    btn.color = { 0.2, 1, 0.2 }
+                    btn.mode = "line"
+                end
             end
-        end
-        btns[1].visible = true
-        btns[1].alpha = 1
-        btns[2].visible = true
-        btns[2].alpha = 1
+            btns[1].visible = true
+            btns[1].alpha = 1
+            btns[2].visible = true
+            btns[2].alpha = 1
 
 
-        if M.isSolved() then
-            print("Game solved!")
-            Core.status = INMENU
-            Core.finalTime = love.timer.getTime() - Core.gameStarted
+            if M.isSolved() then
+                print("Game solved!")
+                Core.status = INMENU
+                Core.finalTime = love.timer.getTime() - Core.gameStarted
+            end
         end
     end
 end
