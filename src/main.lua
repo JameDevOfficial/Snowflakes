@@ -31,3 +31,7 @@ end
 function love.mousemoved(x, y, dx, dy, istouch)
     Core.mousemoved(x, y, dx, dy, istouch)
 end
+
+-- function love.touchpressed(id, x, y, dx, dy, pressure)
+--     Core.touchpressed(id, x, y, dx, dy, pressure)
+-- end

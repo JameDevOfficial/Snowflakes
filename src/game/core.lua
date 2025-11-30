@@ -39,6 +39,11 @@ Core.load = function()
     Core.status = LOADING
     math.randomseed(os.time())
     Core.screen = UI.windowResized()
+    if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then
+        Core.isMobile = true
+    else
+        Core.isMobile = false
+    end
     Core.snowflakes = {}
     Core.snowflakeButtons = {}
     Core.hand = love.mouse.getSystemCursor("hand")
@@ -90,24 +95,22 @@ Core.keypressed = function(key, scancode, isrepeat)
     end
 end
 
-Core.mousepressed = function(x, y, button, istouch, presses)
-    if Core.status ~= INGAME or Core.revealedButtons >= 2 or button ~= 1 then
-        return
-    end
 
-    if Core.status == INHELP then
+Core.mousepressed = function(x, y, button, istouch, presses)
+    if Core.status == INHELP and Core.isMobile then
         Core.status = INMENU
         return
     end
 
-    if Core.status == INMENU and istouch and presses == 1 then
-            Core.reset()
-            Core.status = INGAME
-            Core.gameStarted = love.timer.getTime()
+    if Core.status == INMENU and Core.isMobile then
+        Core.reset()
+        Core.status = INGAME
+        Core.gameStarted = love.timer.getTime()
     end
-        if Core.status == INMENU and istouch and presses == 2 then
-            Core.status = INHELP
-        end
+
+    if Core.status ~= INGAME or Core.revealedButtons >= 2 or button ~= 1 then
+        return
+    end
 
     for i, btn in ipairs(Core.snowflakeButtons) do
         if btn.alpha == 1 and

@@ -73,7 +73,11 @@ UI.drawMenu = function()
     love.graphics.setFont(titleFont)
     local text = "Snowflakes"
     local width = titleFont:getWidth(text)
-    love.graphics.print(text, (Core.screen.w - width) / 2, Core.screen.centerY - 200)
+    if Core.isMobile then
+        love.graphics.print(text, (Core.screen.w - width) / 2, Core.screen.centerY - 100)
+    else
+        love.graphics.print(text, (Core.screen.w - width) / 2, Core.screen.centerY - 200)
+    end
 
     love.graphics.setFont(textFont)
     love.graphics.setColor(1, 1, 1)
@@ -81,12 +85,15 @@ UI.drawMenu = function()
     local text = UI.secondsToFormat(Core.finalTime)
     width = textFont:getWidth(text)
     local height = textFont:getHeight()
-    love.graphics.print(text, (Core.screen.w - width) / 2, Core.screen.centerY - 100)
+    if Core.isMobile then
+        love.graphics.print(text, (Core.screen.w - width) / 2, Core.screen.centerY - 0)
+    else
+        love.graphics.print(text, (Core.screen.w - width) / 2, Core.screen.centerY - 100)
+    end
 
 
     text = "Press 'enter' to start - 'h' for help"
-    local isMobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS"
-    if isMobile then
+    if Core.isMobile then
         text = "Touch to start"
     end
     love.graphics.setFont(textFont)
