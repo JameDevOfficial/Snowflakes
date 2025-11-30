@@ -39,7 +39,7 @@ UI.drawMenu = function()
     for i, snowflake in pairs(Core.snowflakes) do
         snowflake:render()
     end
-    love.graphics.setColor(0.8, 0.8, 1)
+    love.graphics.setColor(0.7, 0.95, 1)
     love.graphics.setFont(titleFont)
     local text = "Snowflakes"
     local width = titleFont:getWidth(text)

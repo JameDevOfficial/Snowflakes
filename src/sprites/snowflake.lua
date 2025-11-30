@@ -156,14 +156,17 @@ end
 
 function M.spawnRandomSnowflakesBackground(dt)
     M.lastSpawned = M.lastSpawned + dt
-    if M.lastSpawned > 2 then
+    if M.lastSpawned > Settings.snowflake.spawnDelay and math.random(1, 100) < Settings.snowflake.spawnChance then
         local rad = math.random(25, 100)
+        local sat = math.random(40, 80) / 100
+        local hue = math.random(70, 90) / 100
         local opts = {
             radius = rad,
             position = {
                 x = math.random(rad, Core.screen.w - rad),
                 y = -rad
             },
+            color = { hue, hue + math.random(1, 10), 1, sat },
             maxOffset = rad / 7,
             speed = math.random(50, 150)
         }
