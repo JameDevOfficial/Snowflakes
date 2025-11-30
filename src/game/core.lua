@@ -95,6 +95,20 @@ Core.mousepressed = function(x, y, button, istouch, presses)
         return
     end
 
+    if Core.status == INHELP then
+        Core.status = INMENU
+        return
+    end
+
+    if Core.status == INMENU and istouch and presses == 1 then
+            Core.reset()
+            Core.status = INGAME
+            Core.gameStarted = love.timer.getTime()
+    end
+        if Core.status == INMENU and istouch and presses == 2 then
+            Core.status = INHELP
+        end
+
     for i, btn in ipairs(Core.snowflakeButtons) do
         if btn.alpha == 1 and
             x > btn[1] and x < btn[1] + btn[3] and

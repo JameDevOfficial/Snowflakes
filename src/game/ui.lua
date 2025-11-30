@@ -83,7 +83,12 @@ UI.drawMenu = function()
     local height = textFont:getHeight()
     love.graphics.print(text, (Core.screen.w - width) / 2, Core.screen.centerY - 100)
 
+
     text = "Press 'enter' to start - 'h' for help"
+    local isMobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS"
+    if isMobile then
+        text = "Touch to start"
+    end
     love.graphics.setFont(textFont)
     love.graphics.setColor(1, 1, 1)
     width = textFont:getWidth(text)
