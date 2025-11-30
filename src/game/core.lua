@@ -22,9 +22,9 @@ Core.load = function()
     Core.lastRevealedButtonTime = 0
 
     --Snowflake.generateSnowflakes(16, 10)
-    Core.generateMemoryField(16, 50)
     Core.status = INGAME
     Core.map = Core.generateRandomMap(16)
+    Core.generateMemoryField(16, 50)
     Core.printMap()
 end
 
@@ -103,6 +103,10 @@ Core.mousemoved = function(x, y, dx, dy, istouch)
 end
 
 function Core.generateRandomMap(amount)
+    if (amount / 2) % 1 ~= 0 then
+        error("Core.generateRandomMap\nInvalid argument: amount(" .. amount .. ") must be a multiple of 2")
+        return
+    end
     local pairs = {}
     local sideAmount = math.floor(math.sqrt(amount) + 0.999)
     for i = 1, amount / 2 do
@@ -132,6 +136,10 @@ function Core.generateRandomMap(amount)
 end
 
 Core.generateMemoryField = function(amount, padding)
+    if (amount / 2) % 1 ~= 0 then
+        error("Core.generateMemoryField\nInvalid argument: amount(" .. amount .. ") must be a multiple of 2")
+        return
+    end
     local sideAmount = math.floor(math.sqrt(amount) + 0.999)
     local screen = Core.screen
     local xOffset = (screen.w - screen.minSize) / 2
@@ -141,11 +149,27 @@ Core.generateMemoryField = function(amount, padding)
     local br = sfWidth / 20
     local bpadding = 10
 
-    local processed = 0
-    for i = 1, sideAmount, 1 do
-        local sideAmount2 = sideAmount
-        if processed + sideAmount > amount then sideAmount2 = amount % sideAmount end
-        for j = 1, sideAmount2, 1 do
+    local processedSnowflakesPointsWithId = {}
+    for i = 1, amount / 2 do
+        processedSnowflakesPointsWithId[i] = nil
+    end
+
+    for i, row in ipairs(Core.map) do
+        for j, id in ipairs(row) do
+            local points = processedSnowflakesPointsWithId[id]
+            if not points then
+                local opts = {
+                    radius = sfWidth / 2,
+                    position = {
+                        x = xOffset + (sfWidth * j - 1) + padding * j - sfWidth / 2,
+                        y = yOffset + (sfWidth * i - 1) + padding * i - sfWidth / 2
+                    },
+                    maxOffset = math.random(minOffset, minOffset * 2.5),
+                }
+                points = Snowflake:new(opts).points
+                processedSnowflakesPointsWithId[id] = points
+            end
+
             local opts = {
                 radius = sfWidth / 2,
                 position = {
@@ -153,25 +177,26 @@ Core.generateMemoryField = function(amount, padding)
                     y = yOffset + (sfWidth * i - 1) + padding * i - sfWidth / 2
                 },
                 maxOffset = math.random(minOffset, minOffset * 2.5),
+                points = points
             }
-            table.insert(Core.snowflakes, Snowflake:new(opts))
+            local newSnowflake = Snowflake:new(opts)
+            table.insert(Core.snowflakes, newSnowflake)
 
             local x = opts.position.x - sfWidth / 2
             local y = opts.position.y - sfWidth / 2
 
-
             table.insert(Core.snowflakeButtons,
                 { x - bpadding, y - bpadding, sfWidth + bpadding * 2, br, visible = true, alpha = 1 })
-            processed = processed + 1
         end
-        if sideAmount2 ~= sideAmount then return end
     end
 end
 
 function Core.drawSnowflakeButtons()
     for i, snowflake in ipairs(Core.snowflakeButtons) do
         love.graphics.setColor(1, 1, 1, snowflake.alpha)
-        love.graphics.rectangle("fill", snowflake[1], snowflake[2], snowflake[3], snowflake[3], snowflake[4],
+        local mode = "fill"
+        if Settings.DEBUG then mode = "line" end
+        love.graphics.rectangle(mode, snowflake[1], snowflake[2], snowflake[3], snowflake[3], snowflake[4],
             snowflake[4])
     end
 end

@@ -9,9 +9,9 @@ function M:new(opts)
     o.maxOffset = opts.maxOffset or 25
     o.color     = opts.color or { 1, 1, 1, 1 }
     o.position  = opts.position or { x = Core.screen.centerX, y = Core.screen.centerY }
-    o.points    = M:createRandomShape(o.radius, o.maxOffset, o.position.x, o.position.y)
-    for i = 1, 2 do
-        table.remove(o.points, 1)
+    o.points    = opts.points or M:createRandomShape(o.radius, o.maxOffset, o.position.x, o.position.y)
+    if opts.points then
+        M:movePoints(opts, o)
     end
     return o
 end
@@ -29,7 +29,7 @@ function M:render()
 end
 
 function M:createRandomShape(radius, maxOffset, cx, cy)
-    local branches = 5 +  math.random(1, 6)
+    local branches = 5 + math.random(1, 6)
     local pointsPerBranch = 16 + 2 * math.random(1, 4)
     local pointsPerBranchSide = pointsPerBranch / 2
     local lastPoint = nil
@@ -88,6 +88,27 @@ function M:createRandomShape(radius, maxOffset, cx, cy)
     table.insert(vertices, lastPoint[2])
 
     return vertices
+end
+
+function M:movePoints(opts, o)
+    local minX, minY, maxX, maxY = math.huge, math.huge, -math.huge, -math.huge
+    for i = 1, #opts.points, 2 do
+        local x, y = opts.points[i], opts.points[i + 1]
+        if x < minX then minX = x end
+        if y < minY then minY = y end
+        if x > maxX then maxX = x end
+        if y > maxY then maxY = y end
+    end
+    local centerX = (minX + maxX) / 2
+    local centerY = (minY + maxY) / 2
+    o.points = {}
+    for i = 1, #opts.points, 2 do
+        local x, y = opts.points[i], opts.points[i + 1]
+        local dx = x - centerX + o.position.x
+        local dy = y - centerY + o.position.y
+        table.insert(o.points, dx)
+        table.insert(o.points, dy)
+    end
 end
 
 return M
