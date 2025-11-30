@@ -29,6 +29,14 @@ UI.drawGame = function()
         snowflake:render()
     end
     MemoryGame.drawSnowflakeButtons()
+
+    love.graphics.setFont(textFont)
+    love.graphics.setColor(1, 1, 1)
+    local ms, s, m
+    local text = UI.secondsToFormat(love.timer.getTime() - Core.gameStarted)
+    local width = textFont:getWidth(text)
+    local height = textFont:getHeight()
+    love.graphics.print(text, Core.screen.w - width - 10, 10)
 end
 
 UI.drawHelp = function()
@@ -47,7 +55,8 @@ UI.drawMenu = function()
 
     love.graphics.setFont(textFont)
     love.graphics.setColor(1, 1, 1)
-    local text = string.format("Time: %02d:%02d", 0, 0)
+    local ms, s, m
+    local text = UI.secondsToFormat(Core.finalTime)
     width = textFont:getWidth(text)
     local height = textFont:getHeight()
     love.graphics.print(text, (Core.screen.w - width) / 2, Core.screen.centerY - 100)
@@ -127,6 +136,13 @@ UI.drawDebug = function()
         )
         love.graphics.print(systemText, 10, y)
     end
+end
+
+function UI.secondsToFormat(seconds)
+    local m = math.floor(seconds / 60)
+    local s = math.floor(seconds % 60)
+    local ms = math.floor((seconds - math.floor(seconds)) * 1000)
+    return string.format("%02d:%02d:%03d", m, s, ms)
 end
 
 UI.windowResized = function()

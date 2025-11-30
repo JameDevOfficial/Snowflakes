@@ -1,4 +1,6 @@
 local Core = {}
+Core.gameStarted = 0
+Core.finalTime = 0
 
 EXITED = -1
 PAUSED = 0
@@ -60,6 +62,7 @@ Core.keypressed = function(key, scancode, isrepeat)
         if key == "return" then
             Core.reset()
             Core.status = INGAME
+            Core.gameStarted = love.timer.getTime()
         end
         if key == "h" or key == "H" then
             Core.status = INHELP
