@@ -4,7 +4,6 @@ EXITED = -1
 PAUSED = 0
 LOADING = 1
 INHELP = 5
--- Below are all fine during game
 INMENU = 11
 INGAME = 12
 
@@ -19,6 +18,8 @@ Core.load = function()
     Core.snowflakes = {}
     Core.snowflakeButtons = {}
     Core.hand = love.mouse.getSystemCursor("hand")
+    Core.revealedButtons = 0
+    Core.lastRevealedButtonTime = 0
 
     --Snowflake.generateSnowflakes(16, 10)
     Core.generateMemoryField(16, 50)
@@ -26,6 +27,19 @@ Core.load = function()
 end
 
 Core.update = function(dt)
+    for i, btn in ipairs(Core.snowflakeButtons) do
+        if btn.visible == false and btn.alpha > 0 then
+            btn.alpha = btn.alpha - 0.01
+        end
+    end
+    print(love.timer.getTime() .. " - " .. Core.lastRevealedButtonTime + Settings.buttons.delay)
+    if Core.revealedButtons > 1 and love.timer.getTime() > Core.lastRevealedButtonTime + Settings.buttons.delay then
+        for i, btn in ipairs(Core.snowflakeButtons) do
+            btn.alpha = 1
+            btn.visible = true
+            Core.revealedButtons = 0
+        end
+    end
 end
 
 Core.keypressed = function(key, scancode, isrepeat)
@@ -53,17 +67,19 @@ Core.keypressed = function(key, scancode, isrepeat)
 end
 
 Core.mousepressed = function(x, y, button, istouch, presses)
-    if Core.status == INGAME then
-        if button == 1 then --lmb
-            for i, button in ipairs(Core.snowflakeButtons) do
-                if x > button[1] and x < button[1] + button[3] then
-                    if y > button[2] and y < button[2] + button[3] then
-                        print("Button Pressed")
-                        button.visible = false
-                        break
-                    end
-                end
-            end
+    if Core.status ~= INGAME or Core.revealedButtons >= 2 or button ~= 1 then
+        return
+    end
+
+    for i, btn in ipairs(Core.snowflakeButtons) do
+        if btn.alpha == 1 and
+           x > btn[1] and x < btn[1] + btn[3] and
+           y > btn[2] and y < btn[2] + btn[3] then
+            print("Button Pressed")
+            btn.visible = false
+            Core.lastRevealedButtonTime = love.timer.getTime()
+            Core.revealedButtons = Core.revealedButtons + 1
+            break
         end
     end
 end
@@ -114,7 +130,7 @@ Core.generateMemoryField = function(amount, padding)
 
 
             table.insert(Core.snowflakeButtons,
-                { x - bpadding, y - bpadding, sfWidth + bpadding * 2, br, visible = true })
+                { x - bpadding, y - bpadding, sfWidth + bpadding * 2, br, visible = true, alpha = 1 })
             processed = processed + 1
         end
         if sideAmount2 ~= sideAmount then return end
@@ -123,10 +139,9 @@ end
 
 function Core.drawSnowflakeButtons()
     for i, snowflake in ipairs(Core.snowflakeButtons) do
-        if snowflake.visible then
-            love.graphics.rectangle("fill", snowflake[1], snowflake[2], snowflake[3], snowflake[3], snowflake[4],
-                snowflake[4])
-        end
+        love.graphics.setColor(1, 1, 1, snowflake.alpha)
+        love.graphics.rectangle("fill", snowflake[1], snowflake[2], snowflake[3], snowflake[3], snowflake[4],
+            snowflake[4])
     end
 end
 

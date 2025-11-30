@@ -5,6 +5,9 @@ M.DEBUG = false
 M.snowflake = {}
 M.snowflake.size = { 100, 100 }
 
+M.buttons = {}
+M.buttons.delay = 2
+
 M.fonts = {}
 M.fonts.quirkyRobot = "assets/fonts/QuirkyRobot.ttf"
 M.fonts.semiCoder = "assets/fonts/SemiCoder.otf"

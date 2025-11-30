@@ -29,7 +29,7 @@ function M:render()
 end
 
 function M:createRandomShape(radius, maxOffset, cx, cy)
-    local branches = 6 + 2 * math.random(1, 2)
+    local branches = 5 +  math.random(1, 6)
     local pointsPerBranch = 16 + 2 * math.random(1, 4)
     local pointsPerBranchSide = pointsPerBranch / 2
     local lastPoint = nil
