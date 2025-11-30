@@ -18,6 +18,8 @@ UI.draw = function()
         UI.drawGame()
     elseif Core.status == INMENU then
         UI.drawMenu()
+    elseif Core.status == INHELP then
+        UI.drawHelp()
     end
     if Settings.DEBUG then
         UI.drawDebug()
@@ -40,7 +42,27 @@ UI.drawGame = function()
 end
 
 UI.drawHelp = function()
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.setFont(textFontBig)
+    local currentY = 100
 
+    local text = string.format("Gameplay: ")
+    local width = textFont:getWidth(text)
+    local height = textFont:getHeight()
+    love.graphics.print(text, (Core.screen.w - width) / 2, currentY)
+    currentY = currentY + height + 10
+
+    love.graphics.setFont(textFont)
+    local text = string.format(
+        "This is a memory game.\nYou need to remind each snowflake and \ntry to find its matching partner. \nStart the game by pressing enter in the menu and \nreveal the memory tiles by clicking \non them with your mouse.\n\nHave fun! ~ Jame")
+    local width = textFont:getWidth(text)
+    local height = textFont:getHeight()
+    love.graphics.print(text, (Core.screen.w - width) / 2, currentY)
+    currentY = currentY + height
+
+    text = "Press any key to return"
+    width = textFont:getWidth(text)
+    love.graphics.print(text, (Core.screen.w - width) / 2, (Core.screen.centerY - height) * 2)
 end
 
 UI.drawMenu = function()

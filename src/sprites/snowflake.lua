@@ -10,8 +10,7 @@ function M:new(opts)
     o.maxOffset = opts.maxOffset or 25
     o.color = opts.color or { 1, 1, 1, 1 }
     o.position = opts.position or { x = Core.screen.centerX, y = Core.screen.centerY }
-    o.speed = opts.speed or Settings.snowflake.speed
-    -- Generate points around (0, 0)
+    o.speed = opts.speed or math.random(50, 150)
     o.points = opts.points or M:createRandomShape(o.radius, o.maxOffset, 0, 0)
     o.angle = opts.angle or 0
 

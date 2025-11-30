@@ -149,7 +149,23 @@ function M.handleButtons()
         btns[1].alpha = 1
         btns[2].visible = true
         btns[2].alpha = 1
+
+
+        if M.isSolved() then
+            print("Game solved!")
+            Core.status = INMENU
+            Core.finalTime = love.timer.getTime() - Core.gameStarted
+        end
     end
+end
+
+function M.isSolved()
+    for _, btn in ipairs(Core.snowflakeButtons) do
+        if btn.visible ~= true or btn.mode ~= "line" then
+            return false
+        end
+    end
+    return true
 end
 
 return M

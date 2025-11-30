@@ -27,9 +27,6 @@ Core.load = function()
     Core.hand = love.mouse.getSystemCursor("hand")
     Core.revealedButtons = 0
     Core.lastRevealedButtonTime = 0
-
-    --Snowflake.generateSnowflakes(16, 10)
-
     Core.status = INMENU
     -- MemoryGame.printMap()
 end
